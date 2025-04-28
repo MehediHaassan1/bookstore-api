@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import router from './app/routes';
+import globalErrorHandler from './middlewares/globalErrorHandler';
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ app.get('/', (req, res) => {
         message: 'Welcome to your Bookstore API! Everything is working perfectly.',
     });
 });
+
+app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

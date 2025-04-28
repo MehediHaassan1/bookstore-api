@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import catchAsync from '../../utils/catchAsync';
+import catchAsync from '../utils/catchAsync';
 
 const validateRequest = (validations: any[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<any>  => {

@@ -11,7 +11,7 @@ const createAuthor = [
         .withMessage('Birthdate is required')
         .isDate()
         .withMessage('Birthdate must be a valid date'),
-    body('bio').optional(),
+    body('bio').optional().isString().withMessage('Bio must be a string'),
 ];
 
 const updateAUthor = [

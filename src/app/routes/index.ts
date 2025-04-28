@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { BookRoutes } from '../modules/book/book.routes';
-import { AuthorRoutes } from '../modules/author/author.routes';
+import { BookRoutes } from './book.routes';
+import { AuthorRoutes } from './author.routes';
 
 const router = Router();
 

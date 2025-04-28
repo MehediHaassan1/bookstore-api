@@ -1,7 +1,8 @@
 import { Router } from "express";
+import { AuthorValidation } from "../validations/author.validation";
+import { AuthorController } from "../controllers/author.controller";
 import validateRequest from "../../middlewares/validateRequest";
-import { AuthorValidation } from "./author.validation";
-import { AuthorController } from "./author.controller";
+
 
 const router = Router();
 
