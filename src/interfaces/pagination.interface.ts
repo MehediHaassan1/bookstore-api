@@ -6,5 +6,5 @@ export type IOptions = {
 export type IOptionsResult = {
     page: number;
     limit: number;
-    skip: number;
+    offset: number;
 };

@@ -8,13 +8,15 @@ import { authorSearchFields } from '../constant/author.constant';
 
 const createAuthorIntoDB = async (data: IAuthor) => {
     const [newAuthor] = await db('authors').insert(data).returning('*');
+    if (!newAuthor) {
+        throw new AppError(status.BAD_REQUEST, 'Author creation failed.');
+    }
     return newAuthor;
 };
 
 const getAuthorsFromDB = async (params: IAuthorFilterRequest, options: IOptions) => {
-    const { page, limit } = pagination(options);
+    const { page, limit, offset } = pagination(options);
     const { searchTerm } = params;
-    const offset = (page - 1) * limit;
 
     const query = db('authors').select('*');
 
@@ -26,7 +28,7 @@ const getAuthorsFromDB = async (params: IAuthorFilterRequest, options: IOptions)
         });
     }
 
-    query.limit(limit).offset(offset);
+    query.limit(limit as number).offset(offset);
     const authors = await query;
 
     const total = await db('authors')
@@ -47,7 +49,7 @@ const getAuthorsFromDB = async (params: IAuthorFilterRequest, options: IOptions)
             page,
             limit,
             total: total?.count || 0,
-            totalPage: Math.ceil((total?.count || 0) / limit),
+            totalPage: Math.ceil((total?.count || 0) / limit as number),
         },
         data: authors,
     };
@@ -55,6 +57,9 @@ const getAuthorsFromDB = async (params: IAuthorFilterRequest, options: IOptions)
 
 const getAuthorFromDB = async (id: string) => {
     const author = await db('authors').where({ id }).first();
+    if(!author){
+        throw new AppError(status.NOT_FOUND, 'Author not found')
+    }
     return author;
 };
 
