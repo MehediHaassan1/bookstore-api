@@ -6,7 +6,7 @@ const router = Router();
 
 const routeConfig = [
     {
-        path: '/book',
+        path: '/books',
         routes: BookRoutes,
     },
     {
