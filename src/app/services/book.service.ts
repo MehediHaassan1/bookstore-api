@@ -71,11 +71,35 @@ const getAllBooksIntDB = async (params: IBookFilterRequest, options: IOptions) =
 };
 
 const getBookByIdFromDB = async (id: string) => {
-    const book = await db('books').where({ id }).first();
+    const book = await db('books')
+        .select(
+            'books.id',
+            'books.title',
+            'books.description',
+            'books.published_date',
+            'books.author_id',
+            'authors.name as author_name',
+            'authors.bio as author_bio',
+            'authors.birthdate as author_birthdate',
+        )
+        .leftJoin('authors', 'books.author_id', 'authors.id')
+        .where('books.id', id)
+        .first();
+
     if (!book) {
         throw new AppError(status.NOT_FOUND, 'Book not found');
     }
-    return book;
+
+    const { author_name, author_bio, author_birthdate, ...rest } = book;
+
+    return {
+        ...rest,
+        author: {
+            author_name,
+            author_bio,
+            author_birthdate,
+        },
+    };
 };
 
 const updateBookByIdIntoDB = async (id: string, data: Partial<IBook>) => {
@@ -92,7 +116,7 @@ const updateBookByIdIntoDB = async (id: string, data: Partial<IBook>) => {
     }
 
     return updatedBook[0];
-}
+};
 
 const deleteBookByIdFromDB = async (id: string) => {
     const deletedBook = await db('books').where({ id }).del().returning('*');

@@ -18,7 +18,20 @@ const getAuthorsFromDB = async (params: IAuthorFilterRequest, options: IOptions)
     const { page, limit, offset } = pagination(options);
     const { searchTerm } = params;
 
-    const query = db('authors').select('*');
+    const query =  db('authors')
+    .select(
+      'authors.id',
+      'authors.name',
+      'authors.bio',
+      'authors.birthdate',
+      db.raw(
+        `COALESCE(json_agg(books.*) FILTER (WHERE books.id IS NOT NULL), '[]') AS books`
+      )
+    )
+    .leftJoin('books', 'authors.id', 'books.author_id')
+    .groupBy('authors.id')
+    .limit(limit as number)
+    .offset(offset);
 
     if (searchTerm) {
         query.where((builder) => {
@@ -56,7 +69,17 @@ const getAuthorsFromDB = async (params: IAuthorFilterRequest, options: IOptions)
 };
 
 const getAuthorFromDB = async (id: string) => {
-    const author = await db('authors').where({ id }).first();
+    const author =  await db('authors')
+    .select('authors.*')
+    .leftJoin('books', 'authors.id', 'books.author_id')
+    .where('authors.id', id)
+    .groupBy('authors.id')
+    .first()
+    .select(
+      db.raw(
+        `COALESCE(json_agg(books.*) FILTER (WHERE books.id IS NOT NULL), '[]') as books`
+      )
+    );
     if(!author){
         throw new AppError(status.NOT_FOUND, 'Author not found')
     }
