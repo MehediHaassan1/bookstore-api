@@ -71,11 +71,54 @@ DB_USER=your_username
 DB_PASSWORD=your_password
 DB_NAME=bookstore_db
 ```
-### 4. Run Migrations
+### 4. Create a new migration file named authors using Knex
+```
+npm run migrate:make authors
+```
+### 5. Replace the data inside ```migrations/xxxx_authors.ts```
+```
+import type { Knex } from "knex";
+
+export async function up(knex: Knex): Promise<void> {
+    return knex.schema.createTable('authors', (table) => {
+        table.increments('id').primary();
+        table.string('name').notNullable();
+        table.text('bio');
+        table.dateTime('birthdate').notNullable();
+      });
+}
+
+export async function down(knex: Knex): Promise<void> {
+    return knex.schema.dropTable('authors');
+}
+```
+### 6. Create a new migration file named books using Knex
+```
+npm run migrate:make books
+```
+### 7. Replace the data inside ```migrations/xxxx_books.ts```
+```
+import type { Knex } from "knex";
+
+export async function up(knex: Knex): Promise<void> {
+    return knex.schema.createTable('books', (table) => {
+        table.increments('id').primary();
+        table.string('title').notNullable();
+        table.text('description');
+        table.date('published_date').notNullable();
+        table.integer('author_id').unsigned().references('id').inTable('authors').onDelete('CASCADE');
+      });
+}
+
+export async function down(knex: Knex): Promise<void> {
+    return knex.schema.dropTable('books');
+}
+```
+### 8. Run Migrations
 ```
 npm run migrate:latest
 ```
-### 5. Start the Server
+### 9. Start the Server
 ```
 npm run dev
 ```

@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "migrate:make": "knex migrate:make",
         "migrate:latest": "knex migrate:latest",
+        "migrate:make": "knex migrate:make",
         "migrate:rollback": "knex migrate:rollback",
         "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
         "build": "tsc",
